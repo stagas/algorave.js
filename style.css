@@ -1,0 +1,42 @@
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: #222;
+}
+
+.keyboard {
+  margin: 10px;
+}
+
+.key {
+  box-sizing: border-box;
+  display: inline-block;
+  padding: 30px 5px 5px 30px;
+  width: 45px;
+  margin: 5px;
+  background: #555;
+  color: #222;
+  border-radius: 4px;
+  font-family: sans-serif;
+  font-size: 7.5pt;
+}
+
+.active {
+  background: #9f2;
+}
+
+.row-1 {
+  margin-left: 27px;
+}
+
+.row-2 {
+  margin-left: 47px;
+}
+
+.row-3 {
+  margin-left: 73px;
+}
