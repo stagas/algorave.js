@@ -45,7 +45,6 @@ SoundKey.prototype.setBank = function(bank) {
   this.el.classList.add('bank-' + this.bank);
 };
 
-
 var keyboard = [
   '1234567890'.split(''),
   'qwertyuiop'.split(''),
@@ -55,6 +54,21 @@ var keyboard = [
 
 var sounds = {};
 var banks = {};
+
+var containerElement = document.createElement('div');
+containerElement.className = 'container';
+document.body.appendChild(containerElement);
+
+var editorElement = document.createElement('div');
+var textarea = document.createElement('textarea');
+editorElement.appendChild(textarea);
+editorElement.className = 'editor';
+textarea.textContent = `\
+export default function(t) {
+  return Math.sin(t * Math.PI * 2 * 440) * .2;
+}
+`
+containerElement.appendChild(editorElement);
 
 var keyboardElement = document.createElement('div');
 keyboardElement.className = 'keyboard';
@@ -79,10 +93,45 @@ for (var i = 0; i < keyboard.length; i++) {
   keyboardElement.appendChild(rowElement);
 }
 
-document.body.appendChild(keyboardElement);
+containerElement.appendChild(keyboardElement);
+
+var elements = {
+  'editor': editorElement,
+  'keyboard': keyboardElement
+};
+var focus = 'keyboard';
+var other = {
+  'editor': 'keyboard',
+  'keyboard': 'editor',
+};
+
+elements[focus].classList.add('focus');
+
+textarea.blur();
+
+document.body.onkeyup = e => {
+  if (e.key === 'Shift') {
+    state.activeBank.turnOff();
+    state.triggerBank = false;
+  }
+}
 
 document.body.onkeydown = e => {
-  if (e.key.length > 1) return;
+  if (e.key.length > 1) {
+    if (e.key === 'Tab') {
+      elements[focus].classList.remove('focus');
+      focus = other[focus];
+      elements[focus].classList.add('focus');
+      if (focus === 'editor') {
+        textarea.focus();
+      } else {
+        textarea.blur();
+      }
+      return false;
+    }
+    return;
+  }
+  if (focus === 'editor') return;
   var charCode = e.key.toLowerCase().charCodeAt(0);
   var key = sounds[charCode];
   if (key == null) {
@@ -112,5 +161,3 @@ var state = {
   activeBank: banks[49],
   triggerBank: false
 };
-
-state.activeBank.turnOn();

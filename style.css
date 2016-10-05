@@ -8,7 +8,29 @@ body {
   background: #222;
 }
 
+.container {
+  margin: 0 auto;
+  width: 600px;
+}
+
+.editor {
+  position: relative;
+}
+
+.editor textarea {
+  box-sizing: border-box;
+  margin: 20px 18px 10px 15px;
+  padding: 20px;
+  width: 569px;
+  height: 190px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  background: #222;
+  color: #999;
+}
+
 .keyboard {
+  position: relative;
   margin: 10px;
 }
 
@@ -18,14 +40,25 @@ body {
   padding: 30px 5px 5px 30px;
   width: 45px;
   margin: 5px;
-  background: #555;
   color: #222;
+  background: #555;
   border-radius: 4px;
   font-family: sans-serif;
   font-size: 7.5pt;
 }
 
-.active {
+.focus:before {
+  position: absolute;
+  content: ' ';
+  width: 15px;
+  height: 15px;
+  left: -50px;
+  top: 105px;
+  border-radius: 100%;
+  background: red;
+}
+
+.active, .focus:before {
   background: #9f2;
 }
 
@@ -42,19 +75,19 @@ body {
 }
 
 .bank-2.active, .key-2.active {
-  background: #c0c;
-}
-
-.bank-3.active, .key-3.active {
-  background: #f70;
-}
-
-.bank-4.active, .key-4.active {
   background: #44f;
 }
 
+.bank-3.active, .key-3.active {
+  background: #f04;
+}
+
+.bank-4.active, .key-4.active {
+  background: #c0c;
+}
+
 .bank-5.active, .key-5.active {
-  background: #f33;
+  background: #f70;
 }
 
 .bank-6.active, .key-6.active {
@@ -74,5 +107,6 @@ body {
 }
 
 .bank-0.active, .key-0.active {
-  background: #f04;
+  background: #f33;
 }
+
