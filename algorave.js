@@ -82,7 +82,8 @@ for (var i = 0; i < keyboard.length; i++) {
 document.body.appendChild(keyboardElement);
 
 document.body.onkeydown = e => {
-  var charCode = e.key.charCodeAt(0);
+  if (e.key.length > 1) return;
+  var charCode = e.key.toLowerCase().charCodeAt(0);
   var key = sounds[charCode];
   if (key == null) {
     key = banks[charCode];
@@ -96,8 +97,10 @@ document.body.onkeydown = e => {
   } else {
     if (state.triggerBank) {
       key.setBank(state.activeBank.name);
-      state.activeBank.turnOff();
-      state.triggerBank = false;
+      if (!e.shiftKey) {
+        state.activeBank.turnOff();
+        state.triggerBank = false;
+      }
       key.turnOn();
     } else {
       key.toggle();
