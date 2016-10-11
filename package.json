@@ -1,0 +1,28 @@
+{
+  "name": "algorave.js",
+  "version": "1.0.0",
+  "description": "algorave instrument",
+  "main": "algorave.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stagas/algorave.js.git"
+  },
+  "keywords": [
+    "algorave",
+    "instrument",
+    "music",
+    "sound",
+    "audio",
+    "dj",
+    "dsp"
+  ],
+  "author": "stagas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stagas/algorave.js/issues"
+  },
+  "homepage": "https://github.com/stagas/algorave.js#readme"
+}
