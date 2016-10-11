@@ -1,1 +1,171 @@
-/home/stagas/work/jazz/dist/jazz.css
+._src_style__editor {
+  overflow: scroll;
+}
+
+._src_style__editor,
+._src_style__layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+._src_style__rows,
+._src_style__mark,
+._src_style__code,
+mark,
+p,
+t,
+k,
+d,
+n,
+o,
+e,
+m,
+f,
+r,
+c,
+s,
+l,
+x {
+  white-space: pre;
+}
+
+._src_style__mark,
+._src_style__code {
+  position: absolute;
+  cursor: text;
+  padding-right: 8px;
+  overflow: hidden;
+}
+
+._src_style__caret {
+  position: absolute;
+  cursor: text;
+  top: 0;
+  left: 0;
+  width: 1px;
+  background: #fff;
+  z-index: 90;
+}
+
+@keyframes _src_style__caret-blink-smooth {
+  0% { opacity: 1 }
+  15% { opacity: 0 }
+  30% { opacity: 0 }
+  70% { opacity: 1 }
+  100% { opacity: 1 }
+}
+
+._src_style__caret._src_style__blink-smooth {
+  animation-name: _src_style__caret-blink-smooth;
+  animation-duration: 776.666ms;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+._src_style__gutter {
+  box-sizing: content-box;
+  position: absolute;
+  padding: 0 15px;
+  left: 0;
+  top: 0;
+  text-align: right;
+  cursor: default;
+  color: #9e9e96;
+}
+
+._src_style__ruler {
+  position: absolute;
+  cursor: text;
+  left: 0;
+  top: 0;
+  right: 0;
+  opacity: 0;
+}
+
+._src_style__gutter._src_style__above {
+  box-shadow: 0px 0px 8px 6px #222;
+}
+
+._src_style__rows {
+  position: absolute;
+  text-align: right;
+  cursor: default;
+  color: #8e8e86;
+  z-index: 5;
+}
+
+._src_style__mark {
+  color: transparent;
+  background: transparent;
+  z-index: 1;
+}
+
+._src_style__find > i {
+  position: absolute;
+  border: 1px solid #ff1;
+  border-radius: 4px;
+  z-index: 50;
+}
+
+._src_style__block > i {
+  position: absolute;
+  border-bottom: 1px solid #aaa;
+  z-index: 60;
+}
+._lib_dialog_style__dialog, ._lib_dialog_style__dialog * {
+  transform: translateZ(0);
+}
+
+._lib_dialog_style__dialog {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  align-content: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: #777;
+  padding: 10px 11px 11px 10px;
+  font-size: 9.5pt;
+  border-top: 1px solid #aaa;
+  border-radius: 0px;
+  background: #efefef;
+  z-index: 100;
+}
+
+._lib_dialog_style__dialog > ._lib_dialog_style__input {
+  display: flex;
+  color: inherit;
+  flex-grow: 1;
+  background: #f3f3f3;
+  border: none;
+  box-shadow: inset 0px 1px 5px -1px rgba(0,0,0,.4);
+  border-radius: 3px;
+  padding: 5px 6px;
+  margin: 0px;
+}
+
+._lib_dialog_style__dialog > ._lib_dialog_style__input > ._lib_dialog_style__text {
+  flex-grow: 1;
+  border: none;
+  color: inherit;
+}
+
+._lib_dialog_style__dialog > ._lib_dialog_style__label {
+  margin-right: 10px;
+}
+
+._lib_dialog_style__dialog > ._lib_dialog_style__input > ._lib_dialog_style__info {
+  padding: 0 0 0 6px;
+  margin-left: 6px;
+  border-left: 1px solid #c9c9c9;
+  color: #999;
+}

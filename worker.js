@@ -22,12 +22,12 @@ self.onmessage = function onmessage(e) {
   if (result) {
     console.log('result of', params.procedureName, result);
     var tx = Object.keys(result)
-      .map(key => result[key])
-      .filter(b => typeof b === 'object')
-      .reduce((p,n) => p.concat(n[0], n[1]), []);
+      .map(function(key) { return result[key] })
+      .filter(function(b) { return typeof b === 'object' })
+      .reduce(function(p,n) { return p.concat(n[0], n[1]) }, []);
     result.id = params.id;
     result.timestamp = params.timestamp;
-    self.postMessage(result, tx.map(b => b.buffer));
+    self.postMessage(result, tx.map(function(b) { return b.buffer }));
   }
 };
 

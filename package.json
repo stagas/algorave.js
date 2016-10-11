@@ -24,5 +24,12 @@
   "bugs": {
     "url": "https://github.com/stagas/algorave.js/issues"
   },
-  "homepage": "https://github.com/stagas/algorave.js#readme"
+  "homepage": "https://github.com/stagas/algorave.js#readme",
+  "dependencies": {
+    "babel-preset-latest": "^6.16.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.0",
+    "css-modulesify": "^0.25.1",
+    "watchify": "^3.7.0"
+  }
 }
