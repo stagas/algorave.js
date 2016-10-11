@@ -1,6 +1,6 @@
 
+var fns = {};
 var bpm = 60;
-var buffers = {};
 var beatTime;
 
 clock();
@@ -44,6 +44,7 @@ procs.setup = function(opts) {
 procs.compile = function(js) {
   var code = Babel.transform(js, { presets: ['es2015'] }).code;
   console.log('compiling');
+  var buffers = {};
 
   var mod = { exports: {} };
   var fn = new Function('module', 'exports', 'require', code);
@@ -59,10 +60,14 @@ procs.compile = function(js) {
 
   for (var key in mod.exports) {
     if ('function' === typeof mod.exports[key]) {
+      if (mod.exports[key].toString() === fns[key]) continue;
       console.log('compile:', key);
+      fns[key] = mod.exports[key].toString();
       buffers[key] = createBankBuffers(mod.exports[key]);
     } else if (Array.isArray(mod.exports[key])) {
+      if (mod.exports[key][1].toString() === fns[key]) continue;
       console.log('compile:', key);
+      fns[key] = mod.exports[key][1].toString();
       buffers[key] = createBankBuffers(mod.exports[key][1], mod.exports[key][0])
     }
   }

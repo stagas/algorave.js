@@ -136,7 +136,7 @@ let { sin, Sin, Saw, Tri, Sqr, Chord, Chords, softClip:clip, note, envelope, Kor
 
 // patches: k l m o p a s d x
 
-export let bpm = 100;
+export let bpm = 120;
 let progr = ['Fmaj7','Bmaj9','D9','G#min7'].map(Chords);
 let progr_2 = ['Cmin','D#min','Fmin','Amin'].map(Chords);
 
@@ -316,15 +316,15 @@ var pad_osc_m2 = Chord(Sqr, 128, true);
 var filter_pad_m0 = Korg35LPF();
 var filter_pad_m1 = Korg35LPF();
 var filter_pad_m2 = Korg35LPF();
-filter_pad_m0.cut(500).res(1.1).sat(2.1);
-filter_pad_m1.cut(500).res(1.1).sat(2.1);
-filter_pad_m2.cut(500).res(1.1).sat(2.1);
+filter_pad_m0.cut(200).res(2.1).sat(2.1);
+filter_pad_m1.cut(200).res(2.1).sat(2.1);
+filter_pad_m2.cut(200).res(2.1).sat(2.1);
 
 var lfo_m = Sin();
 
 export let m = [4, function pad(t) {
   var vol = .5;
-  var c = progr_2[(t*4)%3|0];
+  var c = progr_2[(t*3)%3|0];
   var out_0 = pad_osc_m0(c.map(note).map(n=>n*4)) * envelope(t+1/4, 1/2, 5, -2) * vol * lfo_m(.2);
   var out_1 = pad_osc_m1(c.map(note).map(n=>n*6)) * envelope(t+1/4, 1/2, 5, -2) * vol * lfo_m(.2);
   var out_2 = pad_osc_m2(c.map(note).map(n=>n*8)) * envelope(t+1/4, 1/2, 5, -2) * vol * lfo_m(.2);
