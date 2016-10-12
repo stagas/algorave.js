@@ -132,9 +132,9 @@ var jazzOptions = {
 var jazz = new Jazz(jazzOptions);
 
 jazz.set(localStorage.text || `\
-let { sin, Sin, Saw, Tri, Sqr, Chord, Chords, softClip:clip, note, envelope, Korg35LPF, DiodeFilter } = studio;
+let { sin, Sin, Saw, Tri, Sqr, Chord, Chords, softClip:clip, note, envelope, Korg35LPF, DiodeFilter, MoogLadder } = studio;
 
-// patches: k l m o p a s d x
+// patches: a d k l m o p q s x
 
 export let bpm = 120;
 let progr = ['Fmaj7','Bmaj9','D9','G#min7'].map(Chords);
@@ -360,6 +360,57 @@ export let x = [8, function chip(t) {
     1: vol * arp(t+2/8, 1/16, arp(t, 1/16, chip_osc_x1(c*2)*(t*8%((t/2%2|0)+2)|0), 50, 10) * .8, 10, 20) * envelope(t+2/4, 1/4, 5, 10),
     2: vol * arp(t+2/8, 1/16, arp(t, 1/16, chip_osc_x2(c*4)*(t*16%((t/2%2|0)+2)|0), 50, 10) * .8, 10, 20) * envelope(t+2/4, 1/4, 5, 10),
   }
+}];
+
+var moog_lpf_q0 = MoogLadder('half');
+var moog_lpf_q1 = MoogLadder('half');
+var moog_lpf_q2 = MoogLadder('half');
+
+var moog_osc_q0 = Saw();
+var moog_osc_q1 = Saw();
+var moog_osc_q2 = Saw();
+
+var moog_lfo_q0 = Sin();
+var moog_lfo_q1 = Sin();
+var moog_lfo_q2 = Sin();
+
+export let q = [8, function moog(t){
+  t/=2
+
+  var c = progr[(t%progr.length|0)];
+  var out_0 = moog_osc_q0(note(c[t*4%3|0])*2);
+  var out_1 = moog_osc_q1(note(c[t*4%3|0])*4);
+  var out_2 = moog_osc_q2(note(c[t*4%3|0])*8);
+
+  moog_lpf_q0
+    .cut(700 + (650 * moog_lfo_q0(0.5)))
+    .res(0.87)
+    .sat(2.15)
+    .update();
+
+  moog_lpf_q1
+    .cut(1000 + (950 * moog_lfo_q1(1)))
+    .res(0.87)
+    .sat(2.15)
+    .update();
+
+  moog_lpf_q2
+    .cut(1300 + (1250 * moog_lfo_q2(0.25)))
+    .res(0.87)
+    .sat(2.15)
+    .update();
+
+  out_0 = moog_lpf_q0.run(out_0);
+  out_1 = moog_lpf_q1.run(out_1);
+  out_2 = moog_lpf_q2.run(out_2);
+
+  var vol = .3;
+
+  return {
+    0: out_0 * vol,
+    1: out_1 * vol,
+    2: out_2 * vol,
+  };
 }];
 
 `, 'dsp.js');
