@@ -220,9 +220,11 @@ function arp(t, measure, x, y, z) {
 var bass_a0 = new Bassline();
 var bass_a1 = new Bassline();
 var bass_a2 = new Bassline();
+var bass_a3 = new Bassline();
 bass_a0.seq(progr[0].map(note).map(n=>n*4)).cut(.15).pre(1).hpf(.0022).clip(10).res(.7).lfo(.5);
 bass_a1.seq(progr[1].map(note).map(n=>n*4)).cut(.18).pre(1).hpf(.0022).clip(10).res(.7).lfo(.5);
 bass_a2.seq(progr[2].map(note).map(n=>n*4)).cut(.25).pre(1).hpf(.0022).clip(10).res(.7).lfo(.5);
+bass_a3.seq(progr[3].map(note).map(n=>n*4)).cut(.25).pre(1).hpf(.0022).clip(10).res(.7).lfo(.5);
 
 export let a = [4, function bass_a(t) {
   var vol = .4;
@@ -230,17 +232,21 @@ export let a = [4, function bass_a(t) {
     0: bass_a0.play(t) * envelope(t+1/2, 1/8, 10, 5) * vol,
     1: bass_a1.play(t) * envelope(t+1/2, 1/8, 10, 5) * vol,
     2: bass_a2.play(t) * envelope(t+1/2, 1/8, 10, 5) * vol,
+    3: bass_a3.play(t) * envelope(t+1/2, 1/8, 10, 5) * vol,
   };
 }];
+
 
 
 
 var bass_d0 = new Bassline();
 var bass_d1 = new Bassline();
 var bass_d2 = new Bassline();
+var bass_d3 = new Bassline();
 bass_d0.seq(progr_2[0].map(note).map(n=>n*4)).cut(.15).pre(.5).hpf(.0072).clip(5).res(.7).lfo(1).lfo2(.25);
 bass_d1.seq(progr_2[1].map(note).map(n=>n*4)).cut(.18).pre(.5).hpf(.0072).clip(5).res(.7).lfo(1).lfo2(.25);
 bass_d2.seq(progr_2[2].map(note).map(n=>n*4)).cut(.25).pre(.5).hpf(.0072).clip(5).res(.7).lfo(1).lfo2(.25);
+bass_d3.seq(progr_2[3].map(note).map(n=>n*4)).cut(.25).pre(.5).hpf(.0072).clip(5).res(.7).lfo(1).lfo2(.25);
 
 export let d = [4, function bass_d(t) {
   var vol = .7;
@@ -248,6 +254,7 @@ export let d = [4, function bass_d(t) {
     0: bass_d0.play(t) * envelope(t+1/2, 1/8, 3, 5) * vol,
     1: bass_d1.play(t) * envelope(t+1/2, 1/8, 3, 5) * vol,
     2: bass_d2.play(t) * envelope(t+1/2, 1/8, 3, 5) * vol,
+    3: bass_d3.play(t) * envelope(t+1/2, 1/8, 3, 5) * vol,
   };
 }];
 
@@ -258,6 +265,7 @@ export let k = [4, function kick(t) {
     0: arp(t, 1/4, 50, 30, 8) * vol,
     1: arp(t, 1/4, 60, 30, 8) * vol,
     2: arp(t, 1/4, 40, 30, 8) * vol,
+    3: arp(t, 1/4, 44, 30, 8) * vol,
   };
 }];
 
@@ -267,34 +275,37 @@ export let l = [4, function hihat(t) {
     0: arp(t+1/2, 1/4, Math.random() * 5550, 1600, 350) * vol,
     1: arp(t+1/2, 1/4, Math.random() * 5550, 2600, 350) * vol,
     2: arp(t+1/2, 1/4, Math.random() * 5550, 3600, 350) * vol,
+    3: arp(t+1/2, 1/4, Math.random() * 5550, 4000, 350) * vol,
   };
 }];
 
-var synth_osc_0 = Tri(128, true);
-var synth_osc_1 = Tri(128, true);
-var synth_osc_2 = Tri(128, true);
+var synth_osc_0 = Tri(32, true);
+var synth_osc_1 = Tri(32, true);
+var synth_osc_2 = Tri(32, true);
+var synth_osc_3 = Tri(32, true);
 export let o = [4, function synth(t) {
   var vol = .3;
-  var out_0 = synth_osc_0(note(['d','f'][(t%2)|0])) * envelope(t+1/3, 1/4, 50, 4) * vol;
-  var out_1 = synth_osc_1(note(['b','g#','f'][(t%3)|0])) * envelope(t+1/3, 1/4, 50, 4) * vol;
-  var out_2 = synth_osc_2(note(['f','f5','d','g#'][(t%4)|0])) * envelope(t+1/3, 1/4, 50, 4) * vol;
   return {
-    0: out_0,
-    1: out_1,
-    2: out_2,
+    0: synth_osc_0(note(progr[(t%4)|0][(t*4%3)|0])) * envelope(t+1/2, 1/4, 5, 4) * vol,
+    1: synth_osc_1(note(progr[(t%4)|0][(t*4%3)|0])*2) * envelope(t+1/2, 1/4, 5, 4) * vol,
+    2: synth_osc_2(note(progr[(t%4)|0][(t*4%3)|0])*4) * envelope(t+1/2, 1/4, 5, 4) * vol,
+    3: synth_osc_3(note(progr[(t%4)|0][(t*4%3)|0])*8) * envelope(t+1/2, 1/4, 5, 4) * vol,
   };
 }];
 
 var pad_osc_0 = Chord(Saw, 128, true);
 var pad_osc_1 = Chord(Saw, 128, true);
 var pad_osc_2 = Chord(Saw, 128, true);
+var pad_osc_3 = Chord(Saw, 128, true);
 
 var filter_pad_0 = Korg35LPF();
 var filter_pad_1 = Korg35LPF();
 var filter_pad_2 = Korg35LPF();
+var filter_pad_3 = Korg35LPF();
 filter_pad_0.cut(500).res(2.1).sat(2.1);
 filter_pad_1.cut(500).res(2.1).sat(2.1);
 filter_pad_2.cut(500).res(2.1).sat(2.1);
+filter_pad_3.cut(500).res(2.1).sat(2.1);
 
 export let p = [4, function pad(t) {
   var vol = .3;
@@ -302,23 +313,28 @@ export let p = [4, function pad(t) {
   var out_0 = pad_osc_0(c.map(note).map(n=>n*2)) * envelope(t, 1/4, 5, 4) * vol;
   var out_1 = pad_osc_1(c.map(note).map(n=>n*4)) * envelope(t, 1/4, 5, 4) * vol;
   var out_2 = pad_osc_2(c.map(note).map(n=>n*8)) * envelope(t, 1/4, 5, 4) * vol;
+  var out_3 = pad_osc_2(c.map(note).map(n=>n*8)) * envelope(t, 1/4, 5, 4) * vol;
   return {
     0: filter_pad_0.run(out_0),
     1: filter_pad_1.run(out_1),
     2: filter_pad_2.run(out_2),
+    3: filter_pad_3.run(out_3),
   };
 }];
 
 var pad_osc_m0 = Chord(Sqr, 128, true);
 var pad_osc_m1 = Chord(Sqr, 128, true);
 var pad_osc_m2 = Chord(Sqr, 128, true);
+var pad_osc_m3 = Chord(Sqr, 128, true);
 
 var filter_pad_m0 = Korg35LPF();
 var filter_pad_m1 = Korg35LPF();
 var filter_pad_m2 = Korg35LPF();
+var filter_pad_m3 = Korg35LPF();
 filter_pad_m0.cut(200).res(2.1).sat(2.1);
 filter_pad_m1.cut(200).res(2.1).sat(2.1);
 filter_pad_m2.cut(200).res(2.1).sat(2.1);
+filter_pad_m3.cut(200).res(2.1).sat(2.1);
 
 var lfo_m = Sin();
 
@@ -328,16 +344,19 @@ export let m = [4, function pad(t) {
   var out_0 = pad_osc_m0(c.map(note).map(n=>n*4)) * envelope(t+1/4, 1/2, 5, -2) * vol * lfo_m(.2);
   var out_1 = pad_osc_m1(c.map(note).map(n=>n*6)) * envelope(t+1/4, 1/2, 5, -2) * vol * lfo_m(.2);
   var out_2 = pad_osc_m2(c.map(note).map(n=>n*8)) * envelope(t+1/4, 1/2, 5, -2) * vol * lfo_m(.2);
+  var out_3 = pad_osc_m3(c.map(note).map(n=>n*8)) * envelope(t+1/4, 1/2, 5, -2) * vol * lfo_m(.2);
   return {
     0: filter_pad_m0.run(out_0),
     1: filter_pad_m1.run(out_1),
     2: filter_pad_m2.run(out_2),
+    3: filter_pad_m3.run(out_3),
   };
 }];
 
 var chip_osc_0 = Tri(10, false);
 var chip_osc_1 = Tri(10, false);
 var chip_osc_2 = Tri(10, false);
+var chip_osc_3 = Tri(10, false);
 
 export let s = [8, function chip(t) {
   var c = note(progr[0][t%progr[0].length|0])*8;
@@ -345,12 +364,14 @@ export let s = [8, function chip(t) {
     0: .7 * arp(t+2/8, 1/28, arp(t, 1/16, chip_osc_0(c)*(t*4%((t/2%2|0)+2)|0), 50, 10) * .8, 100, 20) * envelope(t+2/4, 1/4, 5, 10),
     1: .7 * arp(t+2/8, 1/28, arp(t, 1/16, chip_osc_1(c*2)*(t*8%((t/2%2|0)+2)|0), 50, 10) * .8, 100, 20) * envelope(t+2/4, 1/4, 5, 10),
     2: .7 * arp(t+2/8, 1/28, arp(t, 1/16, chip_osc_2(c*4)*(t*16%((t/2%2|0)+2)|0), 50, 10) * .8, 100, 20) * envelope(t+2/4, 1/4, 5, 10),
+    3: .7 * arp(t+2/8, 1/28, arp(t, 1/16, chip_osc_3(c*8)*(t*16%((t/2%2|0)+2)|0), 50, 10) * .8, 100, 20) * envelope(t+2/4, 1/4, 5, 10),
   }
 }];
 
 var chip_osc_x0 = Tri(10, true);
 var chip_osc_x1 = Tri(10, true);
 var chip_osc_x2 = Tri(10, true);
+var chip_osc_x3 = Tri(10, true);
 
 export let x = [8, function chip(t) {
   var c = note(progr_2[0][t%progr_2[0].length|0])*8;
@@ -359,20 +380,24 @@ export let x = [8, function chip(t) {
     0: vol * arp(t+2/8, 1/16, arp(t, 1/16, chip_osc_x0(c)*(t*4%((t/2%2|0)+2)|0), 50, 10) * .8, 10, 20) * envelope(t+2/4, 1/4, 5, 10),
     1: vol * arp(t+2/8, 1/16, arp(t, 1/16, chip_osc_x1(c*2)*(t*8%((t/2%2|0)+2)|0), 50, 10) * .8, 10, 20) * envelope(t+2/4, 1/4, 5, 10),
     2: vol * arp(t+2/8, 1/16, arp(t, 1/16, chip_osc_x2(c*4)*(t*16%((t/2%2|0)+2)|0), 50, 10) * .8, 10, 20) * envelope(t+2/4, 1/4, 5, 10),
+    3: vol * arp(t+2/8, 1/16, arp(t, 1/16, chip_osc_x2(c*8)*(t*16%((t/2%2|0)+2)|0), 50, 10) * .8, 10, 20) * envelope(t+2/4, 1/4, 5, 10),
   }
 }];
 
 var moog_lpf_q0 = MoogLadder('half');
 var moog_lpf_q1 = MoogLadder('half');
 var moog_lpf_q2 = MoogLadder('half');
+var moog_lpf_q3 = MoogLadder('half');
 
 var moog_osc_q0 = Saw();
 var moog_osc_q1 = Saw();
 var moog_osc_q2 = Saw();
+var moog_osc_q3 = Saw();
 
 var moog_lfo_q0 = Sin();
 var moog_lfo_q1 = Sin();
 var moog_lfo_q2 = Sin();
+var moog_lfo_q3 = Sin();
 
 export let q = [8, function moog(t){
   t/=2
@@ -381,6 +406,7 @@ export let q = [8, function moog(t){
   var out_0 = moog_osc_q0(note(c[t*4%3|0])*2);
   var out_1 = moog_osc_q1(note(c[t*4%3|0])*4);
   var out_2 = moog_osc_q2(note(c[t*4%3|0])*8);
+  var out_3 = moog_osc_q3(note(c[t*4%3|0])*8);
 
   moog_lpf_q0
     .cut(700 + (650 * moog_lfo_q0(0.5)))
@@ -400,9 +426,16 @@ export let q = [8, function moog(t){
     .sat(2.15)
     .update();
 
+  moog_lpf_q3
+    .cut(1300 + (1250 * moog_lfo_q2(0.25)))
+    .res(0.87)
+    .sat(2.15)
+    .update();
+
   out_0 = moog_lpf_q0.run(out_0);
   out_1 = moog_lpf_q1.run(out_1);
   out_2 = moog_lpf_q2.run(out_2);
+  out_3 = moog_lpf_q3.run(out_3);
 
   var vol = .3;
 
@@ -410,9 +443,9 @@ export let q = [8, function moog(t){
     0: out_0 * vol,
     1: out_1 * vol,
     2: out_2 * vol,
+    3: out_3 * vol,
   };
 }];
-
 `, 'dsp.js');
 
 editorElement.appendChild(jazzElement);
@@ -571,7 +604,7 @@ document.body.onkeydown = e => {
   }
 };
 
-for (var i = 0; i < 3; i++) {
+for (var i = 0; i < 4; i++) {
   banks.push(new Bank(i));
 }
 
@@ -762,7 +795,7 @@ build(null, localStorage.text || jazz.buffer.text.toString());
 function createBankSources(key, buffers) {
   console.log('create bank sources', key);
   var sources = [];
-  for (var b = 0; b < 3; b++) {
+  for (var b = 0; b < 4; b++) {
     var source = audio.createBufferSource();
     source.loop = true;
     source.onended = disconnect;

@@ -85,6 +85,7 @@ function createBankBuffers(fn, multiplier) {
     [new Float32Array(blockFrames), new Float32Array(blockFrames)],
     [new Float32Array(blockFrames), new Float32Array(blockFrames)],
     [new Float32Array(blockFrames), new Float32Array(blockFrames)],
+    [new Float32Array(blockFrames), new Float32Array(blockFrames)],
   ];
 
   var sample = {};
