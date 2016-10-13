@@ -37,7 +37,9 @@ procs.setup = function(opts) {
   console.log('setup', opts);
   self.sampleRate = opts.sampleRate;
   console.log('sample rate', sampleRate);
-  importScripts('babel.js', 'studio.js');
+  importScripts('babel.js', 'studio.js', 'util.js', 'extended.js');
+  // importScripts('util.js');
+  // importScripts('extended.js');
   return true;
 }
 

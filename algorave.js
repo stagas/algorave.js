@@ -1,59 +1,3 @@
-/**
- * Provides a default map for event.key in keyboard events
- */
-(function (global) {
-    "use strict";
-    var defMap = {
-            13: 'Enter',
-            27: 'Escape',
-
-            33: 'PageUp',
-            34: 'PageDown',
-
-            37: 'ArrowLeft',
-            38: 'ArrowUp',
-            39: 'ArrowRight',
-            40: 'ArrowDown',
-        },
-
-        // Other printable characters
-        fcc = [ 32 ],
-
-        keyManager = global.keyManager = Object.create(Object, {
-            map: {
-                get: function () { return map; },
-                set: function (o) { map = o; }
-            }
-        }),
-
-        prop = { get: function () {
-                    var code = this.which;
-
-                    return map[code] || 'Unidentified';
-               }},
-
-        map = Object.create(defMap);
-
-    // Numpad
-    for (var i = 0; i <= 9; i++)
-        defMap[i + 96] = String(i);
-
-    // F keys
-    for (var i = 1; i < 25; i++)
-        defMap[i + 111] = 'F' + i;
-
-    // Printable characters
-    for (var i = 48; i < 91; i++)
-        defMap[i] = String.fromCharCode(i);
-
-    if (global.KeyboardEvent)
-        Object.defineProperty(global.KeyboardEvent.prototype, 'key', prop);
-
-    if (global.KeyEvent)
-        Object.defineProperty(global.KeyEvent.prototype, 'key', prop);
-
-})(window);
-
 function PadKey(char) {
   this.el = document.createElement('div');
   this.el.className = 'key key-' + char;
@@ -133,6 +77,7 @@ var jazz = new Jazz(jazzOptions);
 
 jazz.set(localStorage.text || `\
 let { sin, Sin, Saw, Tri, Sqr, Chord, Chords, softClip:clip, note, envelope, Korg35LPF, DiodeFilter, MoogLadder } = studio;
+let { Bassline } = extended;
 
 // patches: a d k l m o p q s x
 
@@ -140,82 +85,14 @@ export let bpm = 120;
 let progr = ['Fmaj7','Bmaj9','D9','G#min7'].map(Chords);
 let progr_2 = ['Cmin','D#min','Fmin','Amin'].map(Chords);
 
-function cfg(target, obj) {
-  if (!obj) obj = target;
-  for (var k in obj) {
-    var val = obj[k];
-    var _k = '_' + k;
-    target[_k] = val;
-    target[k] = Setter(_k);
-  }
-  return target;
-};
-
-function Setter(_k){
-  return function(val){
-    this[_k] = val;
-    return this;
-  };
-}
-
-function Bassline(){
-  if (!(this instanceof Bassline)) return new Bassline();
-
-  this.osc = Saw(512);
-  this.filter = DiodeFilter();
-
-  cfg(this, {
-    seq: [110, 220],
-    hpf: .0087,
-    cut: .5,
-    res: .7,
-    lfo: .66,
-    lfo2: .12,
-    pre: 0.32,
-    clip: 30.3
-  });
-}
-
-Bassline.prototype.play = function(t, speed){
-  speed = speed || 1/16;
-
-  var lfo = sin(t, this._lfo);
-  var lfo2 = sin(t, this._lfo2);
-
-  var n = slide(t, speed, this._seq, 14);
-  var synth_osc = this.osc(n);
-  var synth = arp(t, speed, synth_osc, 24, .99);
-
-  synth = this.filter
-    .cut(
-      (0.001 +
-      ((lfo * 0.28 + 1) / 2) *
-      (0.538 + lfo2 * 0.35)) * this._cut
-    )
-    .hpf(this._hpf)
-    .res(this._res)
-    .run(synth * this._pre)
-    ;
-
-  synth = clip(synth * this._clip);
-
-  return synth;
-};
-
-function slide(t, measure, seq, speed){
-  var pos = (t / measure / 2) % seq.length;
-  var now = pos | 0;
-  var next = now + 1;
-  var alpha = pos - now;
-  if (next == seq.length) next = 1;
-  return seq[now] + ((seq[next] - seq[now]) * Math.pow(alpha, speed));
-}
-
-function arp(t, measure, x, y, z) {
-  var ts = t / 4 % measure;
-  return Math.sin(x * (Math.exp(-ts * y))) * Math.exp(-ts * z);
-}
-
+export let r = [4, function(t) {
+   return {
+     0: (sin(t, note(progr[1][0])*.9)>.4*(t*2%4)) * sin(t,.25) * sin(t,.2),
+     1: (sin(t, note(progr[1][0])*.8)>.4*(t*2%4)) * sin(t,.25) * sin(t,.2),
+     2: (sin(t, note(progr[1][0])*1.2)>.4*(t*2%4)) * sin(t,.25) * sin(t,.2),
+     3: (sin(t, note(progr[1][0])*1.5)>.4*(t*2%4)) * sin(t,.25) * sin(t,.2),
+   };
+}];
 
 var bass_a0 = new Bassline();
 var bass_a1 = new Bassline();
@@ -235,9 +112,6 @@ export let a = [4, function bass_a(t) {
     3: bass_a3.play(t) * envelope(t+1/2, 1/8, 10, 5) * vol,
   };
 }];
-
-
-
 
 var bass_d0 = new Bassline();
 var bass_d1 = new Bassline();
@@ -473,14 +347,15 @@ for (var i = 0; i < keyboard.length; i++) {
     key = new SoundKey(char);
     sounds[key.charCode] = key;
     rowElement.appendChild(key.el);
-    key.el.onclick =
-    key.el.onmouseup =
     key.el.onmousedown =
     key.label.onmousedown =
-    key.label.ontouchstart = e => {
-      e.preventDefault();
-      return false
-    };
+    key.label.ontouchstart = debounce((function(key) {
+      return e => {
+        nextBank(key);
+        e.preventDefault();
+        return false
+      }
+    }(key)), 200);
   }
   keyboardElement.appendChild(rowElement);
 }
@@ -687,9 +562,9 @@ jazz.on('input', debounce(() => {
 
 function debounce(fn, ms) {
   var timeout;
-  return function debounceWrap() {
+  return function debounceWrap(a, b, c) {
     clearTimeout(timeout);
-    timeout = setTimeout(fn, ms);
+    timeout = setTimeout(fn, ms, a, b, c);
   };
 }
 
@@ -777,11 +652,20 @@ function compile(buffers) {
     //   source[b].buffer.getChannelData(1).set(buffers[key][b][1]);
     // }
     source.multiplier = buffers[key].multiplier || 4;
+    console.log('key', key, sources[key])
+    var soundKey = sounds[key.charCodeAt(0)];
+    console.log('sound key', soundKey);
+    if (soundKey.active) {
+      source[soundKey.bank.name].start(soundKey.syncTime);
+    }
+    // alterState(key);
   }
   restartSounds.forEach(soundKey => {
     var source = sources[soundKey.name][soundKey.bank.name];
     console.log('start:', soundKey.name);
-    source.start(soundKey.syncTime); //, calcOffsetTime(source.buffer));
+    try {
+      source.start(soundKey.syncTime); //, calcOffsetTime(source.buffer));
+    } catch(e) {}
   });
 }
 
@@ -825,7 +709,6 @@ function disconnect() {
 function normalize(number) {
   return number === Infinity || number === -Infinity || isNaN(number) ? 0 : number;
 }
-
 
 function alterState(key) {
   if (key.active) play(key);
