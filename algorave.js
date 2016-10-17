@@ -85,6 +85,26 @@ export let bpm = 120;
 let progr = ['Fmaj7','Bmaj9','D9','G#min7'].map(Chords);
 let progr_2 = ['Cmin','D#min','Fmin','Amin'].map(Chords);
 
+export let k = [4, function kick(t) {
+  var vol = .6;
+  return {
+    0: arp(t, 1/4, 50, 30, 8) * vol,
+    1: arp(t, 1/4, 56, 32, 8) * vol,
+    2: arp(t, 1/4, 59, 28, 4) * vol,
+    3: arp(t, 1/4, 62, 34, 4) * vol,
+  };
+}];
+
+export let l = [4, function hihat(t) {
+  var vol = .1;
+  return {
+    0: arp(t+1/2, 1/4, Math.random() * 5550, 1600, 350) * vol,
+    1: arp(t+1/2, 1/4, Math.random() * 5550, 2600, 350) * vol,
+    2: arp(t+1/2, 1/4, Math.random() * 5550, 3600, 350) * vol,
+    3: arp(t+1/2, 1/4, Math.random() * 5550, 4000, 350) * vol,
+  };
+}];
+
 export let r = [4, function(t) {
    return {
      0: (sin(t, note(progr[1][0])*.9)>.4*(t*2%4)) * sin(t,.25) * sin(t,.2),
@@ -129,27 +149,6 @@ export let d = [4, function bass_d(t) {
     1: bass_d1.play(t) * envelope(t+1/2, 1/8, 3, 5) * vol,
     2: bass_d2.play(t) * envelope(t+1/2, 1/8, 3, 5) * vol,
     3: bass_d3.play(t) * envelope(t+1/2, 1/8, 3, 5) * vol,
-  };
-}];
-
-
-export let k = [4, function kick(t) {
-  var vol = .6;
-  return {
-    0: arp(t, 1/4, 50, 30, 8) * vol,
-    1: arp(t, 1/4, 60, 30, 8) * vol,
-    2: arp(t, 1/4, 40, 30, 8) * vol,
-    3: arp(t, 1/4, 44, 30, 8) * vol,
-  };
-}];
-
-export let l = [4, function hihat(t) {
-  var vol = .1;
-  return {
-    0: arp(t+1/2, 1/4, Math.random() * 5550, 1600, 350) * vol,
-    1: arp(t+1/2, 1/4, Math.random() * 5550, 2600, 350) * vol,
-    2: arp(t+1/2, 1/4, Math.random() * 5550, 3600, 350) * vol,
-    3: arp(t+1/2, 1/4, Math.random() * 5550, 4000, 350) * vol,
   };
 }];
 
@@ -628,45 +627,21 @@ function calcOffsetTime(buffer) {
 
 function compile(buffers) {
   console.log('local compile', buffers);
-  var restartSounds = [];
-  for (var key in sounds) {
-    var soundKey = sounds[key];
-    if (soundKey.active) {
-      var source = sources[soundKey.name][soundKey.bank.name];
-      if (source.buffer) {
-        restartSounds.push(soundKey);
-        soundKey.syncTime = calcSyncTime(source.multiplier);
-        console.log('stop:', soundKey.name);
-        source.stop(soundKey.syncTime);
-      }
-    }
-  }
+  var oldSources = Object.assign({}, sources)
   for (var key in buffers) {
     if ('id' === key || 'timestamp' === key) continue;
-    // sources[key] = createBankSources(key, buffers[key]);
     var source = sources[key];
     source = sources[key] = createBankSources(key, buffers[key]);
-    // for (var b = 0; b < 3; b++) {
-    //   source[b].buffer = audio.createBuffer(2, buffers[key][b][0].length, audio.sampleRate);
-    //   source[b].buffer.getChannelData(0).set(buffers[key][b][0]);
-    //   source[b].buffer.getChannelData(1).set(buffers[key][b][1]);
-    // }
     source.multiplier = buffers[key].multiplier || 4;
     console.log('key', key, sources[key])
     var soundKey = sounds[key.charCodeAt(0)];
     console.log('sound key', soundKey);
     if (soundKey.active) {
+      soundKey.syncTime = calcSyncTime(source.multiplier);
+      oldSources[key][soundKey.bank.name].stop(soundKey.syncTime);
       source[soundKey.bank.name].start(soundKey.syncTime);
     }
-    // alterState(key);
   }
-  restartSounds.forEach(soundKey => {
-    var source = sources[soundKey.name][soundKey.bank.name];
-    console.log('start:', soundKey.name);
-    try {
-      source.start(soundKey.syncTime); //, calcOffsetTime(source.buffer));
-    } catch(e) {}
-  });
 }
 
 allKeys.forEach(key => {
@@ -702,6 +677,10 @@ function calcSyncTime(multiplier) {
   );
 }
 
+function calcSyncOffset(multiplier) {
+  return normalize();
+}
+
 function disconnect() {
   this.disconnect();
 }
@@ -730,7 +709,9 @@ function play(key) {
         source.connect(audio.destination);
         source.buffer = buffer;
       }
-    } catch(e) {}
+    } catch(e) {
+      console.log('cannot create source', key, e)
+    }
     source = sources[key.name][key.bank.name];
     console.log('start:', source);
     source.start(syncTime);

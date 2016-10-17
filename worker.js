@@ -1,5 +1,6 @@
 
 var fns = {};
+var prevBpm = 60;
 var bpm = 60;
 var beatTime;
 
@@ -56,6 +57,8 @@ procs.compile = function(js) {
   if ('bpm' in mod.exports) {
     console.log('set bpm:', mod.exports.bpm);
     bpm = mod.exports.bpm;
+    if (prevBpm !== bpm) fns = {};
+    prevBpm = bpm;
     self.postMessage(bpm);
     clock();
   }
