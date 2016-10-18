@@ -582,6 +582,7 @@ window.onscroll = e => {
 
 window.onresize = e => {
   getKeysPositions();
+  getXYPositions();
   if (prevHeight && prevHeight < document.body.clientHeight) {
     jazz.blur();
   }
