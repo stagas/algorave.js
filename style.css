@@ -20,28 +20,50 @@
 html, body {
   padding: 0;
   margin: 0;
+  overflow: hidden;
 }
 
 body {
   position: absolute;
-  background: #222;
-  width: 99%;
-  height: 99%;
+  background: #252026;
+  width: 100%;
+  height: 100%;
 }
 
 .container {
   position: absolute;
   display: flex;
   flex: 1;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
   justify-content: stretch;
   width: 100%;
   height: 100%;
 }
 
+.column-left {
+  position: absolute;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: stretch;
+  flex: 1;
+  width: 80%;
+  height: 100%;
+}
+
+.column-right {
+  position: absolute;
+  right: 0;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: stretch;
+  flex: 1;
+  width: 20%;
+  height: 100%;
+}
+
 .editor {
   display: flex;
-  flex: 1;
+  flex: 1.39;
 }
 
 .editor .jazz {
@@ -67,7 +89,7 @@ body {
 
 .keyboard-container {
   display: flex;
-  flex: 1;
+  flex: 1.16;
   width: 100%;
   height: 100%;
 }
@@ -76,6 +98,8 @@ body {
   display: flex;
   flex: 1;
   flex-flow: column wrap;
+  padding-right: 7px;
+  padding-bottom: 8px;
 }
 
 .row {
@@ -99,7 +123,7 @@ body {
   padding: 1%;
   flex: 1;
   color: #222;
-  background: #333;
+  background: #293339;
   font-family: sans-serif;
   font-size: 7.5pt;
 }
@@ -222,4 +246,106 @@ body {
 
 .bank-9.active { /*, .key-9.active { */
   background: #f33;
+}
+
+.xy-container {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  justify-content: stretch;
+  width: 100%;
+  height: 100%;
+}
+
+.xy-controller {
+  position: relative;
+  display: flex;
+  flex: 1;
+  background: #293339;
+  border: 2px dotted #252026;
+  border-left-width: 4px;
+  border-bottom: 0;
+  border-right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.xy-controller:after {
+  position: absolute;
+  content: ' ';
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  border-left: 1px dotted rgba(20,0,0,.35);
+}
+
+.xy-controller:before {
+  position: absolute;
+  content: ' ';
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  border-top: 1px dotted rgba(20,0,0,.35);
+}
+
+.xy-controller span {
+  z-index: 1;
+  position: absolute;
+  content: ' ';
+  width: 80px;
+  height: 80px;
+  margin-left: -40px;
+  margin-top: -40px;
+  left: 50%;
+  top: 50%;
+  background: #293339;
+  border: 1px dotted rgba(20,0,0,.25);
+  border-radius: 100%;
+}
+
+.xy-controller span:after {
+  z-index: 1;
+  position: absolute;
+  content: ' ';
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  margin-top: -5px;
+  left: 50%;
+  top: 50%;
+  background: rgba(255,200,200,.09);  
+  // background: #252026;
+  border-radius: 100%;
+}
+
+.xy-spot {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  margin-bottom: -7px;
+  border-radius: 100%;
+  background: #8c0;
+}
+
+.xy-spot:after {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 42px;
+  height: 42px;
+  margin-left: -15px;
+  margin-bottom: -15px;
+  border-radius: 100%;
+  border: 1px solid rgba(115,155,155,.5);  
+}
+
+.xy-1 .xy-spot {
+  left: 20%;
+  top: 20%;
 }

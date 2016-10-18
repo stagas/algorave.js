@@ -63,6 +63,15 @@ var containerElement = document.createElement('div');
 containerElement.className = 'container';
 document.body.appendChild(containerElement);
 
+var columnLeft = document.createElement('div');
+columnLeft.className = 'column-left';
+
+var columnRight = document.createElement('div');
+columnRight.className = 'column-right';
+
+document.body.appendChild(columnLeft);
+document.body.appendChild(columnRight);
+
 var editorElement = document.createElement('div');
 editorElement.className = 'editor';
 
@@ -322,7 +331,9 @@ export let q = [8, function moog(t){
 `, 'dsp.js');
 
 editorElement.appendChild(jazzElement);
-containerElement.appendChild(editorElement);
+
+columnLeft.appendChild(editorElement);
+
 jazz.use(jazzElement);
 
 var keyboardContainerElement = document.createElement('div');
@@ -408,7 +419,73 @@ keyboardElement.ontouchstart = function handler(e) {
 };
 
 keyboardContainerElement.appendChild(keyboardElement);
-containerElement.appendChild(keyboardContainerElement);
+
+var XYs = ['a','b'].map(createXYController);
+var XYContainer = document.createElement('div');
+XYContainer.className = 'xy-container';
+
+XYContainer.ontouchstart =
+XYContainer.ontouchenter =
+XYContainer.ontouchmove =
+XYContainer.onmousemove = e => {
+  e.stopPropagation();
+  e.preventDefault();
+
+  if (!e.touches) {
+    e.touches = [e];
+  }
+
+  for (var i = 0; i < e.touches.length; i++) {
+    var touch = e.touches[i];
+    for (var j = 0; j < XYs.length; j++) {
+      var xy = XYs[j];
+      // if (xy.active === false) continue;
+      if ( touch.clientX > xy.pos.left && touch.clientX < xy.pos.left + xy.pos.width
+        && touch.clientY > xy.pos.top && touch.clientY < xy.pos.top + xy.pos.height
+        ) {      
+        Object.assign(xy.spot.style, {
+          left: touch.clientX - xy.pos.left + 'px',
+          top: touch.clientY - xy.pos.top + 'px'
+        });
+      }
+    }
+  }
+};
+
+function createXYController(n) {
+  var xy = {};
+
+  var el = document.createElement('div');
+  el.className = 'xy-controller xy-' + n;
+
+  var spot = document.createElement('div');
+  spot.className = 'xy-spot';
+
+  el.appendChild(spot);
+  var center = document.createElement('span');
+  el.appendChild(center);
+
+  el.ontouchleave = e => {
+    xy.active = false;
+  };
+
+  document.body.addEventListener('mouseup', el.ontouchleave);
+
+  el.onmousedown = e => {
+    xy.active = true;
+  };
+
+  xy.el = el;
+  xy.spot = spot;
+
+  return xy;
+}
+
+XYs.forEach(xy => XYContainer.appendChild(xy.el));
+
+columnRight.appendChild(XYContainer);
+
+columnLeft.appendChild(keyboardContainerElement);
 
 var elements = {
   'editor': editorElement,
@@ -489,9 +566,14 @@ function getKeysPositions() {
   }
 }
 
+function getXYPositions() {
+  XYs.forEach(xy => xy.pos = xy.el.getBoundingClientRect());  
+}
+
 var prevHeight = 0;
 
 getKeysPositions();
+getXYPositions();
 
 window.onscroll = e => {
   e.preventDefault();
